@@ -1,0 +1,155 @@
+from storage import save_task, load_task
+from datetime import datetime
+from typing import Any
+
+def add_task(task_description: str, tasks: dict[str, dict[str, Any]]) -> str:
+
+    if not isinstance(task_description, str):
+        return "task description must be a string"
+    
+    if not isinstance(tasks, dict):
+        return "tasks on memory must a dictionary"
+
+    if not tasks:
+        next_id = 1
+    else:
+        last_id = int(next(reversed(tasks)))
+        next_id = generate_id(last_id)
+
+    task = {
+        "id" : next_id,
+        "description" : task_description,
+        "status": "todo",
+        "createdAt": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+        "updatedAt": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    }
+
+    tasks[next_id] = task
+    message = save_task(tasks)
+    if message == "success":
+        return "Ticket saved successfully"
+    return message
+
+
+def generate_id(last_id): return last_id + 1
+
+def update_task(task_id: str, new_description: str, tasks: dict[str, dict[str, Any]]) -> str:
+    if not tasks:
+        return "No available tasks to update"
+
+    if not isinstance(task_id, str):
+        return "Task ID must be a string"
+
+    if not isinstance(new_description, str):
+        return "New task description must be a string"
+
+    task = tasks.get(task_id, f"No task with ID: {task_id}")
+
+    if not isinstance(task, dict):
+        return task
+        
+    task["description"] = new_description
+    task["updatedAt"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    message = save_task(tasks)
+    if message == "success":
+        return f"Task with ID: {task_id} updated successfully"
+    return message
+
+
+def delete_task(task_id: str, tasks: dict[str, dict[str, Any]]) -> str:
+    if not isinstance(task_id, str) or not task_id:
+        return "Task ID must be a non-empty string"
+    
+    if not tasks:
+        return "No available task to delete"
+    
+    if task_id not in tasks:
+        return f"No task with ID: {task_id} found"
+
+    deleted_task = tasks.pop(task_id)
+    message = save_task(tasks)
+    if message == "success":
+        return f"""
+Task with ID: {task_id} deleted successfully
+-----------------------------------------------
+Task Details:
+ID: {deleted_task["id"]}
+Description: {deleted_task["description"]}
+Status: {deleted_task["status"]}
+Last Updated: {deleted_task["updatedAt"]}
+"""
+    return message
+
+
+def status_marker(task_id: str, status: str, tasks: dict[str, dict[str, Any]]) -> str:
+    VALID_STATUS = ["todo", "in-progress", "done"]
+
+    if not isinstance(task_id, str) or not task_id:
+        return "Task ID must be a non-empty string"
+
+    if not isinstance(status, str) or not status:
+        return "status must be a non-empty string"
+    
+    if status not in VALID_STATUS:
+        return "Invalid Status"
+
+    if not tasks:
+        return "No available task to update status"
+
+    task = tasks.get(task_id)
+    if not isinstance(task, dict):
+        return f"No task with ID: {task_id} found"
+
+    task["status"] = status
+    task["updatedAt"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    message = save_task(tasks)
+    if message == "success":
+        return f"Status of Task with ID: {task_id} marked {status}"
+    return message
+
+
+def list_all_tasks(tasks: dict[str, dict[str, Any]]) -> str:
+    if not isinstance(tasks, dict):
+        return "Task must be a dictionary"
+
+    if not tasks:
+        return "No available task"
+    
+    output_text = ""
+
+    for index, (task_key, task_data) in enumerate(tasks.items(), start=1):
+        output_text += f"""
+------------------------------------
+ID: {task_data.get("id", "N/A")}
+Description: {task_data.get("description", "N/A")}
+Status: {task_data.get("status", "N/A")}
+Created At: {task_data.get("createdAt", "N/A")}
+Updated At: {task_data.get("updatedAt", "N/A")}
+------------------------------------"""
+        
+    return output_text
+
+
+def list_by_status(status: str, tasks: dict[str, dict[str, Any]]) -> str:
+    if not isinstance(tasks, dict):
+        return "Task must be a dictionary"
+
+    if not tasks:
+        return "No available task"
+    
+    output_text = ""
+
+    for index, (task_key, task_data) in enumerate(tasks.items(), start=1):
+        if task_data.get("status") == status:
+            output_text += f"""
+------------------------------------
+ID: {task_data.get("id", "N/A")}
+Description: {task_data.get("description", "N/A")}
+Status: {task_data.get("status", "N/A")}
+Created At: {task_data.get("createdAt", "N/A")}
+Updated At: {task_data.get("updatedAt", "N/A")}
+------------------------------------"""
+        
+    if not output_text:
+        return f"No ticket with {status} available"
+    return output_text
