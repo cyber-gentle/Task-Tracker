@@ -1,6 +1,6 @@
 import sys
 from storage import load_task, save_task
-from tasks import add_task, update_task, delete_task
+from tasks import add_task, update_task, delete_task, status_marker
 
 def main():
     if len(sys.argv) < 3 or len(sys.argv) > 4:
@@ -26,6 +26,17 @@ def main():
         case _ if command == "delete" and len(sys.argv) == 3:
             task_id = str(sys.argv[2])
             print(delete_task(task_id, tasks))
+
+        case _ if command in ("mark-in-progress", "mark-done", "mark-todo") and len(sys.argv) == 3:
+            task_id = str(sys.argv[2])
+
+            match command:
+                case "mark-todo":
+                    print(status_marker(task_id, "todo", tasks))
+                case "mark-in-progress":
+                    print(status_marker(task_id, "in-progress", tasks))
+                case "mark-done":
+                    print(status_marker(task_id, "done", tasks))
 
         case _:
             print(f"Unknown command or invalid arguments for '{command}'")

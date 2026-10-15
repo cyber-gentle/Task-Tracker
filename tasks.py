@@ -79,3 +79,30 @@ Status: {deleted_task["status"]}
 Last Updated: {deleted_task["updatedAt"]}
 """
     return message
+
+
+def status_marker(task_id: str, status: str, tasks: dict[str, dict[str, Any]]) -> str:
+    VALID_STATUS = ["todo", "in-progress", "done"]
+
+    if not isinstance(task_id, str) or not task_id:
+        return "Task ID must be a non-empty string"
+
+    if not isinstance(status, str) or not status:
+        return "status must be a non-empty string"
+    
+    if status not in VALID_STATUS:
+        return "Invalid Status"
+
+    if not tasks:
+        return "No available task to update status"
+
+    task = tasks.get(task_id)
+    if not isinstance(task, dict):
+        return f"No task with ID: {task_id} found"
+
+    task["status"] = status
+    task["updatedAt"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    message = save_task(tasks)
+    if message == "success":
+        return f"Status of Task with ID: {task_id} marked {status}"
+    return message
