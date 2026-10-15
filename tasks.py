@@ -54,3 +54,28 @@ def update_task(task_id: str, new_description: str, tasks: dict[str, dict[str, A
     if message == "success":
         return f"Task with ID: {task_id} updated successfully"
     return message
+
+
+def delete_task(task_id: str, tasks: dict[str, dict[str, Any]]) -> str:
+    if not isinstance(task_id, str) or not task_id:
+        return "Task ID must be a non-empty string"
+    
+    if not tasks:
+        return "No available task to delete"
+    
+    if task_id not in tasks:
+        return f"No task with ID: {task_id} found"
+
+    deleted_task = tasks.pop(task_id)
+    message = save_task(tasks)
+    if message == "success":
+        return f"""
+Task with ID: {task_id} deleted successfully
+-----------------------------------------------
+Task Details:
+ID: {deleted_task["id"]}
+Description: {deleted_task["description"]}
+Status: {deleted_task["status"]}
+Last Updated: {deleted_task["updatedAt"]}
+"""
+    return message
