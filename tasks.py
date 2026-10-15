@@ -1,7 +1,8 @@
 from storage import save_task, load_task
 from datetime import datetime
+from typing import Any
 
-def add_task(task_description: str, tasks: dict[str, dict[str, str]]) -> str:
+def add_task(task_description: str, tasks: dict[str, dict[str, Any]]) -> str:
 
     if not isinstance(task_description, str):
         return "task description must be a string"
@@ -24,19 +25,35 @@ def add_task(task_description: str, tasks: dict[str, dict[str, str]]) -> str:
     }
 
     tasks[next_id] = task
-    return save_task(tasks)
+    message = save_task(tasks)
+    if message == "success":
+        return "Ticket saved successfully"
+    return message
 
 
 def generate_id(last_id): return last_id + 1
 
-if __name__ == "__main__":
-    print(add_task("add rice", {
-    "1": {
-        "id": 1,
-        "description": "add beans",
-        "status": "todo",
-        "createdAt": "2026-10-14 16:45:30",
-        "updatedAt": "2026-10-14 16:45:30"
-    }
-}))
+def update_task(task_id: str, new_description: str, tasks: dict[str, dict[str, Any]]) -> str:
+    if not tasks:
+        return "No available tasks to update"
+
+    if not isinstance(task_id, str):
+        return "Task ID must be an int"
+
+    if not isinstance(new_description, str):
+        return "New task description must be a string"
+
+    task = tasks.get(task_id, f"No task with ID: {task_id}")
+
+    if not isinstance(task, dict):
+        return task
+        
+    task["description"] = new_description
+    task["updatedAt"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    message = save_task(tasks)
+    if message == "success":
+        return f"Ticket with ID: {task_id} updated successfully"
+    return message
+
+
     
