@@ -1,10 +1,10 @@
 import sys
 from storage import load_task, save_task
-from tasks import add_task, update_task, delete_task, status_marker
+from tasks import add_task, update_task, delete_task, status_marker, list_all_tasks, list_by_status
 
 def main():
-    if len(sys.argv) < 3 or len(sys.argv) > 4:
-        print("Length of argument must be 2 or 3")
+    if len(sys.argv) < 2 or len(sys.argv) > 4:
+        print("Invalid number of arguments. Usage: python3 main.py <command> [args]")
         return
         
     command = sys.argv[1].lower()
@@ -37,6 +37,15 @@ def main():
                     print(status_marker(task_id, "in-progress", tasks))
                 case "mark-done":
                     print(status_marker(task_id, "done", tasks))
+
+        case _ if command == "list":
+            if len(sys.argv) == 2:
+                print(list_all_tasks(tasks))
+            elif len(sys.argv) == 3:
+                status = str(sys.argv[2])
+                print(list_by_status(status, tasks))
+            else:
+                print("Usage: python3 main.py list [todo|in-progress|done]")
 
         case _:
             print(f"Unknown command or invalid arguments for '{command}'")

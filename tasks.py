@@ -106,3 +106,50 @@ def status_marker(task_id: str, status: str, tasks: dict[str, dict[str, Any]]) -
     if message == "success":
         return f"Status of Task with ID: {task_id} marked {status}"
     return message
+
+
+def list_all_tasks(tasks: dict[str, dict[str, Any]]) -> str:
+    if not isinstance(tasks, dict):
+        return "Task must be a dictionary"
+
+    if not tasks:
+        return "No available task"
+    
+    output_text = ""
+
+    for index, (task_key, task_data) in enumerate(tasks.items(), start=1):
+        output_text += f"""
+------------------------------------
+ID: {task_data.get("id", "N/A")}
+Description: {task_data.get("description", "N/A")}
+Status: {task_data.get("status", "N/A")}
+Created At: {task_data.get("createdAt", "N/A")}
+Updated At: {task_data.get("updatedAt", "N/A")}
+------------------------------------"""
+        
+    return output_text
+
+
+def list_by_status(status: str, tasks: dict[str, dict[str, Any]]) -> str:
+    if not isinstance(tasks, dict):
+        return "Task must be a dictionary"
+
+    if not tasks:
+        return "No available task"
+    
+    output_text = ""
+
+    for index, (task_key, task_data) in enumerate(tasks.items(), start=1):
+        if task_data.get("status") == status:
+            output_text += f"""
+------------------------------------
+ID: {task_data.get("id", "N/A")}
+Description: {task_data.get("description", "N/A")}
+Status: {task_data.get("status", "N/A")}
+Created At: {task_data.get("createdAt", "N/A")}
+Updated At: {task_data.get("updatedAt", "N/A")}
+------------------------------------"""
+        
+    if not output_text:
+        return f"No ticket with {status} available"
+    return output_text
