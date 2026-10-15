@@ -1,0 +1,12 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Temporary / editor backup files
+*.save
+*.swp
+*.bak
+
+# Local task data
+tasks.json

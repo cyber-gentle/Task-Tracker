@@ -1,11 +1,11 @@
 import sys
-from storage  import load_task, save_task
+from storage import load_task, save_task
 from tasks import add_task, update_task
 
 def main():
-    
     if len(sys.argv) < 3 or len(sys.argv) > 4:
-           print("Lenght of argument must be 2 or 3")
+        print("Length of argument must be 2 or 3")
+        return
         
     command = sys.argv[1].lower()
     tasks, message = load_task()
@@ -23,12 +23,8 @@ def main():
             new_description = str(sys.argv[3])
             print(update_task(task_id, new_description, tasks))
 
-        # case _ if command == "delete" and len(sys.argv) == 3:
-        #     # task_id
-            
-    
-
-
+        case _:
+            print(f"Unknown command or invalid arguments for '{command}'")
 
 
 if __name__ == "__main__":

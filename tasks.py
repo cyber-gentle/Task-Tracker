@@ -38,7 +38,7 @@ def update_task(task_id: str, new_description: str, tasks: dict[str, dict[str, A
         return "No available tasks to update"
 
     if not isinstance(task_id, str):
-        return "Task ID must be an int"
+        return "Task ID must be a string"
 
     if not isinstance(new_description, str):
         return "New task description must be a string"
@@ -52,8 +52,5 @@ def update_task(task_id: str, new_description: str, tasks: dict[str, dict[str, A
     task["updatedAt"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     message = save_task(tasks)
     if message == "success":
-        return f"Ticket with ID: {task_id} updated successfully"
+        return f"Task with ID: {task_id} updated successfully"
     return message
-
-
-    
